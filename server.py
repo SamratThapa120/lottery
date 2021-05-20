@@ -12,7 +12,7 @@ __name__ = "lottery"
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-DEF_PERIOD = 5*365*24*3600     #By default, we use data of past 5 years
+DEF_PERIOD = 1*365*24*3600     #By default, we use data of past 5 years
 MAX_LEN = 5                 #defines default 'n' for n-most popular/least popular items
 
 PLANETS = ['Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn',
@@ -131,6 +131,7 @@ def get_information(period,lottery,max_len,min_win_amt=None):
         lots.append(lottery_files[l][lottery_files[l].Date>datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp()-period)])
     data = pd.concat(lots)
     if min_win_amt:
+        data.Amount = data.Amount.astype('float')
         data = data[data.Amount>=min_win_amt]
     if(len(data)==0):
         app.response_class(
