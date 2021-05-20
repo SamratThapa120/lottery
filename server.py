@@ -7,9 +7,9 @@ import os
 import datetime
 from ast import literal_eval
 
-__name_ = "lottery"
+__name__ = "lottery"
 
-app = flask.Flask(__name_)
+app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 DEF_PERIOD = 5*365*24*3600     #By default, we use data of past 5 years
@@ -201,4 +201,5 @@ def get_stats():
     print(period,lottery_type,amount,max_len)
     data = get_information(period,lottery_type,max_len,amount)
     return data,200
+
 app.run()
