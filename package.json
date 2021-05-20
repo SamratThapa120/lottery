@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.0.1",
+    "bootstrap-multiselect": "^0.9.15",
+    "bootstrap-select": "^1.13.18",
+    "bootstrap-social": "^5.1.1"
+  }
+}

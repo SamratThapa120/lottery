@@ -1,5 +1,110 @@
 <html>
-    <head><title>Lottery</title></head>
-    
-    <body></body>
+    <head>
+        <title>Lottery</title>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+        <meta http-equiv='x-ua-compatible' content='ie=edge'>
+
+        <script src="jquery-3.6.0.min.js"></script>
+        <link rel='stylesheet' href='node_modules/bootstrap/dist/css/bootstrap.min.css'>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>    
+
+        <link rel='stylesheet' href='styles.css'>
+        
+    </head>
+    <body>
+        <div class="container m-3" style="border:3px solid #cecece; padding: 10px;">
+            <div class="row">
+                <div class="col-md-1">
+                    <label class="form-control-label">Period: </label>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm">
+                        <option>1 week</option>
+                        <option>1 month</option>
+                        <option>6 months</option>
+                        <option>1 year</option>
+                        <option>2 year</option>
+                        <option>5 years</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-control-label">Num. Count: </label>
+                </div>
+                <div class="col-md-1">
+                    <select class="form-control form-control-sm">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-control-label">Amount: </label>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm">
+                        <option>1 week</option>
+                        <option>1 month</option>
+                        <option>6 months</option>
+                        <option>1 year</option>
+                        <option>2 year</option>
+                        <option>5 years</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-control-label">Lottery: </label>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm">
+                        <option>All</option>
+                        <option>Euro dollar</option>
+                        <option>Austria</option>
+                        <option>Us DOllar</option>
+                        <option>World Lotto</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-primary" id="refresh_button">Refresh</button>
+                </div>
+            </div>
+            <div class="row" id="loader_id">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border m-5" style="width: 5rem; height: 5rem;" role="status">
+                      <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="prediction_display">
+
+            </div>
+        </div>
+        <script>
+            $body = $("#content_display");
+
+            $(document).on({
+                ajaxStart: function() { $body.addClass("loading");    },
+                ajaxStop: function() { $body.removeClass("loading"); }    
+            });
+
+            // Initiates an AJAX request on click
+            $('#refresh_button').on("click", function(){
+            });
+        </script>
+        <!-- Loading the data from server -->
+        <!-- <script>
+            var jqxhr = $.getJSON( "http://127.0.0.1:5000/dashboard", (data)=> {
+                var mostPopular = [];
+                $.each( data, function( key, val ) {
+                    items.push( "<li id='" + key + "'>" + val + "</li>" );
+                });
+                
+                $( "<ul/>", {
+                    "class": "my-new-list",
+                    html: items.join( "" )
+                }).appendTo( "body" );
+            });
+        </script> -->
+    </body>
 </html>

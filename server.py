@@ -1,5 +1,6 @@
 import flask
 from flask import jsonify,request
+from flask_cors.decorator import cross_origin
 import pandas as pd
 import numpy as np
 import os
@@ -170,7 +171,7 @@ def get_information(period,lottery,max_len,min_win_amt=None):
 
 @app.route('/',methods=['GET'])
 def default():
-    return f'<html><body>Lottery Names: {LOTTERY_NAMES}</body></html>'
+    return open('./index.html').read()
 
 @app.route('/test',methods=['GET'])
 def test():
@@ -181,6 +182,7 @@ def test():
                 )
 
 @app.route('/dashboard',methods=['GET'])
+@cross_origin()
 def get_stats():
     period = DEF_PERIOD
     lottery_types = None
