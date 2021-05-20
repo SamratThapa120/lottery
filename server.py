@@ -12,7 +12,7 @@ __name_ = "lottery"
 app = flask.Flask(__name_)
 app.config["DEBUG"] = True
 
-DEF_PERIOD = 3*365*24*3600     #By default, we use data of past 3 years
+DEF_PERIOD = 5*365*24*3600     #By default, we use data of past 5 years
 MAX_LEN = 5                 #defines default 'n' for n-most popular/least popular items
 
 PLANETS = ['Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn',
@@ -33,6 +33,8 @@ data_planet.Date = pd.to_datetime(data_planet.Date)
 
 moon_data = pd.read_csv(MOON_PATH)
 moon_data.Date = pd.to_datetime(moon_data.Date)
+
+
 
 #Helper function to clean the dates
 def date_time_filter(date):
@@ -155,16 +157,14 @@ def get_information(period,lottery,max_len,min_win_amt=None):
         p_num = []
         p_ext = []
         for zodiac in ZODIAC:
-            pop,ext = get_n_popular(data[data[planet]==zodiac],1) #Only one popular number is extracted for planets and zodiacs to make the table look cleaner
-            if len(pop)>1:
-                print(pop)
-            p_num.append(-1) if len(pop)==0 else p_num.extend(pop)
-            p_ext.append(-1) if len(ext)==0 else p_ext.extend(ext)
+            pop,ext = get_n_popular(data[data[planet]==zodiac],max_len) #Only one popular number is extracted for planets and zodiacs to make the table look cleaner
+            p_num.append(pop)
+            p_ext.append(ext)
         planet_cyc_pop.append(p_num)
         planet_cyc_pop_ext.append(p_ext)
     
     #Convert to JSON
-    return jsonify(Lottery=lottery,Moon_Cycles=MOON_CYCLES,Zodiac=ZODIAC, 
+    return jsonify(Lottery=lottery,Moon_Cycles=MOON_CYCLES,Zodiac=ZODIAC, Planets = PLANETS,
         Most_Popular_Numbers=most_pop,Least_Popular_Numbers=least_pop,Least_Popular_Extras=least_pop_ext,Most_Popular_Extras= most_pop_ext,
         Most_popular_Numbers_Moon_Cycle=moon_cyc_pop,Most_popular_Extras_Moon_Cycle=moon_cyc_pop_ext,
         Most_popular_Numbers_Planet_Cycle=planet_cyc_pop,Most_popular_Extras_Planet_Cycle=planet_cyc_pop_ext)
@@ -185,20 +185,20 @@ def test():
 @cross_origin()
 def get_stats():
     period = DEF_PERIOD
-    lottery_types = None
+    lottery_type = None
     amount = None
     max_len = MAX_LEN
-    if 'period' in request.form:
-        period = int(request.form['period'])
-    if 'amount' in request.form:
-        amount = float(request.form['amount'])
-    if 'max_len' in request.form:
-        max_len = int(request.form['max_len'])
-    if 'lottery_type' in request.form:
-        lottery_types = literal_eval(request.form['lottery_type'])
-        for lt in lottery_types:
-            if lt not in LOTTERY_NAMES:
-                return jsonify('bad request!'),400
-    data = get_information(period,lottery_types,max_len,amount)
+    if 'period' in request.args:
+        period = int(request.args['period'])
+    if 'amount' in request.args:
+        amount = float(request.args['amount'])
+    if 'max_len' in request.args:
+        max_len = int(request.args['max_len'])
+    if 'lottery_type' in request.args:
+        lottery_type = [request.args['lottery_type']]
+        if lottery_type[0] not in LOTTERY_NAMES:
+            return jsonify('bad request!'),400
+    print(period,lottery_type,amount,max_len)
+    data = get_information(period,lottery_type,max_len,amount)
     return data,200
 app.run()

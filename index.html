@@ -8,7 +8,9 @@
         <script src="jquery-3.6.0.min.js"></script>
         <link rel='stylesheet' href='node_modules/bootstrap/dist/css/bootstrap.min.css'>
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>    
-
+        <script>
+            var first=true;
+        </script>
         <link rel='stylesheet' href='styles.css'>
         
     </head>
@@ -19,50 +21,46 @@
                     <label class="form-control-label">Period: </label>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-control form-control-sm">
-                        <option>1 week</option>
-                        <option>1 month</option>
-                        <option>6 months</option>
-                        <option>1 year</option>
-                        <option>2 year</option>
-                        <option>5 years</option>
+                    <select class="form-control form-control-sm" id="period_option">
+                        <option value="6570000">5 years</option>
+                        <option value="2628000">2 year</option>
+                        <option value="1314000">1 year</option>
+                        <option value="648000">6 months</option>
+                        <option value="108000">1 month</option>
+                        <option value="25200">1 week</option>
                     </select>
                 </div>
                 <div class="col-md-1">
                     <label class="form-control-label">Num. Count: </label>
                 </div>
                 <div class="col-md-1">
-                    <select class="form-control form-control-sm">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <select class="form-control form-control-sm" id="choices_option">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
                     </select>
                 </div>
                 <div class="col-md-1">
                     <label class="form-control-label">Amount: </label>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-control form-control-sm">
-                        <option>1 week</option>
-                        <option>1 month</option>
-                        <option>6 months</option>
-                        <option>1 year</option>
-                        <option>2 year</option>
-                        <option>5 years</option>
+                    <select class="form-control form-control-sm" id="amount_option">
+                        <option value="0">All</option>
+                        <option value="100000">10000</option>
+                        <option value="100000">100000</option>
+                        <option value="1000000">1000000</option>
+                        <option value="10000000">10000000</option>
+                        <option value="100000000">100000000</option>
                     </select>
                 </div>
                 <div class="col-md-1">
                     <label class="form-control-label">Lottery: </label>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-control form-control-sm">
+                    <select class="form-control form-control-sm" id="lottery_list">
                         <option>All</option>
-                        <option>Euro dollar</option>
-                        <option>Austria</option>
-                        <option>Us DOllar</option>
-                        <option>World Lotto</option>
                     </select>
                 </div>
                 <div class="col-md-1">
@@ -77,34 +75,119 @@
                 </div>
             </div>
             <div id="prediction_display">
-
+                <div class="row m-2">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Most Popular Numbers</th>
+                                <td id="most_popular_numbers"> </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Least Popular Numbers</th>
+                                <td id="least_popular_numbers"> </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Most Popular Extra Numbers</th>
+                                <td id="most_popular_ext_numbers"> </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Least Popular Extra Numbers</th>
+                                <td id="least_popular_ext_numbers"> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row m-2">
+                    <div class="col-12">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                  <th scope="col">Moon Cycle</th>
+                                  <th scope="col">Numbers</th>
+                                  <th scope="col">Extras</th>
+                                </tr>
+                            </thead>
+                            <tbody id="moon_cycle_table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row m-2">
+                    <div class="col-12">
+                        <table class="table table-striped" id="planet_zodiac_table">
+                        </table>
+                    </div>
+                </div>        
             </div>
         </div>
         <script>
-            $body = $("#content_display");
+            var handler = (data)=> {
+                const DEF_VAL = "-"
+                if(first){
+                    var options = $('#lottery_list');
+                    for(l of data.Lottery){
+                        options.append('<option>'+l+'</option>');
+                    }
+                    first = false;
+                }
+                (data.Least_Popular_Numbers.length>0)? $("#least_popular_numbers").text(data.Least_Popular_Numbers):$("#least_popular_numbers").text(DEF_VAL);
+                (data.Most_Popular_Numbers.length>0)? $("#most_popular_numbers").text(data.Most_Popular_Numbers):$("#most_popular_numbers").text(DEF_VAL);
+                (data.Most_Popular_Extras.length>0)? $("#most_popular_ext_numbers").text(data.Most_Popular_Extras):$("#most_popular_ext_numbers").text(DEF_VAL);
+                (data.Least_Popular_Extras.length>0)? $("#least_popular_ext_numbers").text(data.Least_Popular_Extras):$("#least_popular_ext_numbers").text(DEF_VAL);
 
-            $(document).on({
-                ajaxStart: function() { $body.addClass("loading");    },
-                ajaxStop: function() { $body.removeClass("loading"); }    
-            });
+                var mt = $('#moon_cycle_table');
+                mt.empty();
+                for (let i = 0; i < data.Moon_Cycles.length; i++) {
+                    mt.append('<tr><th>'+data.Moon_Cycles[i]+'</th><td>'+data.Most_popular_Numbers_Moon_Cycle[i]+'</td><td>'+data.Most_popular_Extras_Moon_Cycle[i]+'</td></tr>');
+                }
 
+                var zt = $('#planet_zodiac_table');
+                zt.empty();
+                var val = '<thead><tr><th>Planet</th>';
+                for (z of data.Zodiac)
+                    val +='<th>'+z+'</th>';
+                val = val+'</tr></thead><tbody>';
+                for (let i = 0; i < data.Most_popular_Numbers_Planet_Cycle.length; i++) {
+                    val += '<tr><th>'+data.Planets[i]+'</th>';
+                    for(p of data.Most_popular_Numbers_Planet_Cycle[i])
+                        val += '<td>'+(p==-1?' ':p)+'</td>';
+                    val += '</tr>';
+                }
+                val +='</tbody>';
+                zt.append(val);
+                // $.each( data, function( key, val ) {
+                //     items.push( "<li id='" + key + "'>" + val + "</li>" );
+                // });
+                
+                // $( "<ul/>", {
+                //     "class": "my-new-list",
+                //     html: items.join( "" )
+                // }).appendTo( "body" );
+                $('#loader_id').hide()
+                $('#prediction_display').show()
+            }
+
+            $('#prediction_display').hide()
             // Initiates an AJAX request on click
             $('#refresh_button').on("click", function(){
+                $('#loader_id').show()
+                $('#prediction_display').hide()
+                req= {}
+                amt = $( "#amount_option option:selected" ).val();
+                period = $( "#period_option option:selected" ).val();
+                choices = $( "#choices_option option:selected" ).val();
+                lottery = $( "#lottery_list option:selected" ).text();
+                req["period"]=period;
+                req["amount"]=amt;
+                req['max_len']=choices;
+                if (lottery!='All')
+                    req['lottery_type']=lottery;
+                var jqxhr = $.getJSON( "http://127.0.0.1:5000/dashboard",req, handler);
             });
         </script>
         <!-- Loading the data from server -->
-        <!-- <script>
-            var jqxhr = $.getJSON( "http://127.0.0.1:5000/dashboard", (data)=> {
-                var mostPopular = [];
-                $.each( data, function( key, val ) {
-                    items.push( "<li id='" + key + "'>" + val + "</li>" );
-                });
-                
-                $( "<ul/>", {
-                    "class": "my-new-list",
-                    html: items.join( "" )
-                }).appendTo( "body" );
-            });
-        </script> -->
+        <script>
+            var jqxhr = $.getJSON( "http://127.0.0.1:5000/dashboard", handler);
+        </script>
     </body>
 </html>
